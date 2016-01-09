@@ -1,0 +1,90 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    // The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags
+    meta(name='description', content='')
+    meta(name='author', content='')
+    link(rel='icon', href='favicon.ico')
+    title= title
+    // Bootstrap core CSS
+    link(href='/styles/bootstrap.min.css', rel='stylesheet')
+    link(href='/styles/registration.css', rel='stylesheet')
+    link(href='/styles/style.css', rel='stylesheet')
+    // HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries
+    //if lt IE 9
+      script(src='https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js')
+      script(src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js')
+  body
+    .container
+        form#login-form.form-signin
+            h2.form-signin-heading Registration
+            label.sr-only(for='first_name') First Name
+            input#first_name.form-control(type='text', name="first_name", placeholder='First Name', required='', autofocus='')
+            label.sr-only(for='last_name') Last Name
+            input#last_name.form-control(type='text', name="last_name", placeholder='Last Name', required='', autofocus='')
+            label.sr-only(for='email') Email address
+            input#email.form-control(type='email', name="email", placeholder='Email address', required='')
+            label.sr-only(for='password') Password
+            input#password.form-control(type='password', name="password", placeholder='Password', required='')
+            label.sr-only(for='confirm_password') Confirm Password
+            input#confirm_password.form-control(type='password', name="confirm_password", placeholder='Confirm Password', required='')
+            #alert_message.alert.hide(role='alert')
+            button#register.btn.btn-lg.btn-primary.btn-block(type='button') Submit
+    // /container
+    // SCRIPTS
+    script(src="/js/dependencies/sails.io.js")
+    script(src="/js/dependencies/jquery.min.js")
+    script(src="/js/bootstrap.min.js")
+    // SCRIPTS END
+    script(src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js")
+    script().
+        $(document).ready(function(){
+            jQuery.extend(jQuery.validator.messages, {
+                equalTo: "Please enter the same password value again.",
+            });
+
+            $("#login-form").validate({
+                rules: {
+                    password: "required",
+                    confirm_password: {
+                        equalTo: "#password"
+                    }
+                }
+            });
+            
+            $("#register").on("click", function(){
+                $("#alert_message").removeClass("alert-danger alert-success show").addClass("hide")
+                var loginForm = $("#login-form");
+                loginForm.validate()
+                //- console.log("Is valid form: " + loginForm.valid());
+
+                if(loginForm.valid())
+                {
+                    var user = {
+                        first_name: $("#first_name").val(),
+                        last_name: $("#last_name").val(),
+                        email: $("#email").val(), 
+                        password: $("#password").val()
+                    }
+
+                    //- console.log("User: ")
+                    //- console.log(user)
+                    io.socket.post("/user/create", user, function(response){
+                        if(response.success)
+                        {
+                            $("#alert_message").html("User was successfully registered.")
+                            $("#alert_message").removeClass("alert-danger hide").addClass("alert-success show")
+                        }
+                        else
+                        {
+                            $("#alert_message").html(response.message)
+                            $("#alert_message").removeClass("alert-success hide").addClass("alert-danger show")
+                        }
+                    })
+                    
+                }
+            })
+        })
