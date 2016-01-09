@@ -30,8 +30,11 @@
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/anonymous node/sails user/mewe_jump.git"
+    "url": "https://github.com/jeffdagala/mewe_jump.git"
   },
   "author": "anonymous node/sails user",
-  "license": ""
+  "license": "",
+  "devDependencies": {
+    "jade": "^1.11.0"
+  }
 }
