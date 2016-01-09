@@ -55,7 +55,21 @@ module.exports = {
 
 		if(_cookie && _cookie.login)
 		{
-			return res.view({ title: "Incident Details | MeWe Jump", user:_cookie, menu: "incident"});
+			Incident.findOne({id: req.param('id')}, function(err, incident) {
+				var data = incident;
+				if(err || (!incident)) {
+
+					data = {
+                        type: "N/A",
+                        description: "",
+                        lat: 0,
+                        lng: 0,
+                        status: ""
+                    }
+				}
+			
+				return res.view({ title: "Incident Details | MeWe Jump", data: data, user:_cookie, menu: "incident"});
+			})
 		}
 		else
 		{
