@@ -48,6 +48,20 @@ module.exports = {
 		{
 			return res.redirect("/")
 		}
+	},
+	details: function(req, res) {
+		console.log( req.param('id') )
+		var _cookie = (req.cookies && req.cookies.meweauth ? req.cookies.meweauth : false)
+
+		if(_cookie && _cookie.login)
+		{
+			return res.view({ title: "Incident Details | MeWe Jump", user:_cookie, menu: "incident"});
+		}
+		else
+		{
+			return res.redirect("/")
+		}
+		// req.param('id')
 	}
 };
 
