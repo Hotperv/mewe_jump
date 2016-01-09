@@ -68,7 +68,7 @@ module.exports = {
                     }
 				}
 			
-				return res.view({ title: "Incident Details | MeWe Jump", data: data, user:_cookie, menu: "incident"});
+				return res.view({ title: "Incident Details | MeWe Jump", data: data, user:_cookie, menu: "details"});
 			})
 		}
 		else
