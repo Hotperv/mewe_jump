@@ -38,3 +38,11 @@ body {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+.registration, .registration:hover {
+  text-decoration: none !important;
+}
+
+p {
+  margin-top: 10px;
+}
