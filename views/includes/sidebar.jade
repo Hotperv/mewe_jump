@@ -9,7 +9,14 @@
 
 		if menu === 'incident'
 			li.active
+				a(href='#') Incidents
+		else
+			li
+				a(href='/incident') Incidents
+
+		if menu === 'report'
+			li.active
 				a(href='#') Report Incident
 		else
 			li
-				a(href='/incident') Report Incident
+				a(href='/incident/report') Report an Incident

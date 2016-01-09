@@ -1,0 +1,129 @@
+extends ../layout-dashboard
+
+
+block page-header
+
+block page-body
+    //- h1.page-header Report an Incident
+    .row.placeholders
+        #map(style="height:350px; width:100%")
+    .row.placeholders
+        form#incident-form.form-signin
+            h2.form-signin-heading Incident Report
+            label.sr-only(for='access_type') Incident Type
+            select#incident_type.form-control(name="incident_type", placeholder='Incident Type', required='')
+                option(value="Fire") Fire
+                option(value="Brown Out") Brown Out
+                option(value="Accident") Accident
+            
+            label.sr-only(for='access_type') Incident Type
+            textarea#description.form-control(name="description", placeholder='Description', required='')
+            #alert_message.alert.hide(role='alert')
+            button#register.btn.btn-lg.btn-primary.btn-block(type='button') Submit
+
+
+block page-scripts
+    script().
+        var map;
+        var marker;
+        var infowindow;
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(initMap);
+            } else {
+               console.log("The browser does not have capability to get geolocation.")
+            }
+        }
+
+        function initMap(position) {
+            var myPosition = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+            map = new google.maps.Map(document.getElementById('map'), {
+            center: myPosition,
+            zoom: 16
+            });
+
+            var contentString = '<div id="content">'+
+            '<div id="siteNotice">'+
+            '</div>'+
+            '<h4 id="firstHeading" class="firstHeading">Incident: Fire</h4>'+
+            '<div id="bodyContent">'+
+            '<p>Incident Description</p>'+
+            '</div>'+
+            '</div>';
+
+            infowindow = new google.maps.InfoWindow({
+                content: contentString
+            });
+
+            marker = new google.maps.Marker({
+                map: map,
+                draggable: true,
+                animation: google.maps.Animation.DROP,
+                position: myPosition,
+                //- title:"Hello World!"
+            });
+
+            marker.addListener('click', function() {
+                infowindow.open(map, marker);
+            });
+
+        }
+
+        function changeInfoWindow()
+        {
+            if(infowindow && infowindow.setContent)
+            {
+
+                var contentString = '<div id="content">'+
+                '<div id="siteNotice">'+
+                '</div>'+
+                '<h4 id="firstHeading" class="firstHeading">Incident: ' + $("#incident_type").val() + '</h4>'+
+                '<div id="bodyContent">'+
+                '<p>' + ($("#description").val() || "Incident Description") + '</p>'+
+                '</div>'+
+                '</div>';
+                infowindow.setContent(contentString)
+            }
+        }
+
+        $(document).ready(function(){
+            $("#incident_type").on("change",changeInfoWindow)
+            $("#description").on('input', changeInfoWindow)
+
+
+            $("#register").on("click", function(){
+                $("#alert_message").removeClass("alert-danger alert-success show").addClass("hide")
+                var incidentForm = $("#incident-form");
+                incidentForm.validate()
+                //- console.log("Is valid form: " + incidentForm.valid());
+
+                if(incidentForm.valid())
+                {
+                    var incident = {
+                        type: $("#incident_type").val(),
+                        description: $("#description").val(),
+                        lat: marker.getPosition().lat(),
+                        lng: marker.getPosition().lng(),
+                        status: "User Reported"
+                    }
+
+                    //- console.log("User: ")
+                    //- console.log(user)
+                    io.socket.post("/incident/create", incident, function(response){
+                        if(response.success)
+                        {
+                            $("#alert_message").html("Incident report has been submitted.")
+                            $("#alert_message").removeClass("alert-danger hide").addClass("alert-success show")
+                        }
+                        else
+                        {
+                            $("#alert_message").html(response.message)
+                            $("#alert_message").removeClass("alert-success hide").addClass("alert-danger show")
+                        }
+                    })
+                    
+                }
+            })
+        })
+    script(async='', defer='', src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDOFaIHtxnWnFdp3Kc5p2rFnM9LinJ9J5w&callback=getLocation')

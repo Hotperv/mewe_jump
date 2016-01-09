@@ -9,7 +9,7 @@ module.exports = {
 	create: function(req, res) {
 		if(req.param("type") && req.param("lat") && req.param("lng"))
 		{
-			Incident.create({email: req.param("email").toLowerCase()}, function(err, incident){
+			Incident.create(req.body, function(err, incident){
 				if(!err)
 				{
 					return res.send(200, {success:true, incident: incident})
@@ -30,7 +30,19 @@ module.exports = {
 
 		if(_cookie && _cookie.login)
 		{
-			return res.view({ title: "Incident | MeWe Jump", user:_cookie, menu: "incident"});
+			return res.view({ title: "Report an Incident | MeWe Jump", user:_cookie, menu: "incident"});
+		}
+		else
+		{
+			return res.redirect("/")
+		}
+	},
+	report: function(req, res) {
+		var _cookie = (req.cookies && req.cookies.meweauth ? req.cookies.meweauth : false)
+
+		if(_cookie && _cookie.login)
+		{
+			return res.view({ title: "Report an Incident | MeWe Jump", user:_cookie, menu: "report"});
 		}
 		else
 		{
