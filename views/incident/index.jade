@@ -60,7 +60,12 @@ block page-scripts
                             return "test"
                         }
                     }
-                ]
+                ],
+                "fnRowCallback" : function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    $(nRow).on('click',function(event){
+                        window.location.href = '/incident/details?id=' + aData.id;
+                    })
+                }
             });
             setInterval(function(){
                 getDatas();
