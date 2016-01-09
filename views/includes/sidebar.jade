@@ -1,0 +1,15 @@
+.col-sm-3.col-md-2.sidebar
+	ul.nav.nav-sidebar
+		if menu === 'dashboard'
+			li.active
+				a(href='#') Dashboard
+		else
+			li
+				a(href='/dashboard') Dashboard
+
+		if menu === 'incident'
+			li.active
+				a(href='#') Report Incident
+		else
+			li
+				a(href='/incident') Report Incident

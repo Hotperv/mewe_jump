@@ -29,6 +29,6 @@ body {
   z-index: 2;
 }
 
-.form-signin input {
+.form-signin input, .form-signin select {
   margin-bottom: 5px;
 }
